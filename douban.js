@@ -1,12 +1,12 @@
 /**
  * Douban 用户动态推送
  * @author: Derek
- * @version: 0.1.0
+ * @version: 0.1.1
  */
 
-let users = ["121769342"];
+let users = ["121769342", "1148126"];
 let maxImgs = 3;
-let len = 30;
+let len = 69;
 
 const $ = API("Douban");
 const debug = false;
@@ -29,9 +29,8 @@ Promise.all(
                     let cnt = 0;
                     body.match(/<item>.*?<\/item>/g).forEach((item) => {
                         if (cnt >= maxImgs) return;
-                        console.log(`==== item: ${item}`);
                         const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)[1];
-                        console.log(`title: ${title}`);
+                        const start = title.indexOf(':') + 1;
                         const link = item.match(/<link>(.*?)<\/link>/)[1];
                         const img = item.match(/img src="(.*?)"/);
                         const updateTime = new Date(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]).getTime();
@@ -39,14 +38,14 @@ Promise.all(
                             if (debug || updated[user] === undefined || updated[user] < updateTime) {
                                 const encodeImg = encodeURIComponent(img[1]);
                                 const imgLink = `shortcuts://run-shortcut?name=PicOpener&input=${encodeImg}`
-                                $.notify(`[Douban] ${userName}`, `${title}`, `Link: ${link}`, {
+                                $.notify(`[豆瓣] ${userName}`, `${title.slice(start, len)}...`, `source: ${link}`, {
                                     "media-url": img[1],
                                     "open-url": imgLink
                                 });
                                 cnt += 1;
                             } else return;
                         } else {
-                            $.notify(`[Douban] ${userName}`, `${title}`, "", {
+                            $.notify(`[豆瓣] ${userName}`, `${title.slice(start, len)}...`, "点击查看更多", {
                                 "open-url": link
                             });
                         }
