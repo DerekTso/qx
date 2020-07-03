@@ -23,12 +23,13 @@ Promise.all(
     users.map(async (user) => {
         await $.get(`https://rsshub.app/douban/people/${user}/status`)
             .then((response) => {
-                const body = response.body;
-                console.log(`response: ${body}`);
+                const body = response.body.replace(/[\r|\n]/g, '');
+                console.log(`body: ' ${body}`);
                 const userName = body.match(/CDATA\[\s?豆瓣广播 - (.*)\s?\]/)[1];
                 let cnt = 0;
                 response.body.match(/<item>[\s\S]*?<\/item>/g).forEach((item) => {
                     if (cnt >= maxImgs) return;
+                    console.log(`item: ' ${item}`);
                     const titleSet = item.match(/<title>[\s\S]*?<\/title>/g)[1];
                     console.log(`titleset: ' ${titleSet}`);
                     const title = titleSet.match(/CDATA\[(.*)\]/)[1].slice(len);
