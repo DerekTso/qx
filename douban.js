@@ -29,10 +29,10 @@ Promise.all(
                     let cnt = 0;
                     body.match(/<item>.*?<\/item>/g).forEach((item) => {
                         if (cnt >= maxImgs) return;
-                        console.log(`==== item: ' ${item}`);
-                        const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/g)[1];
-                        console.log(`title: ' ${title}`);
-                        const link = item.match(/<link>(.*?)<\/link>/g)[1];
+                        console.log(`==== item: ${item}`);
+                        const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)[1];
+                        console.log(`title: ${title}`);
+                        const link = item.match(/<link>(.*?)<\/link>/)[1];
                         const img = item.match(/img src="(.*?)"/);
                         const updateTime = new Date(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]).getTime();
                         if (img) {
