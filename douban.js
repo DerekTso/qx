@@ -1,10 +1,10 @@
 /**
  * Douban 用户动态推送
  * @author: Derek
- * @version: 0.1.1
+ * @version: 0.1.2
  */
 
-let users = ["121769342", "1148126"];
+let users = ["121769342", "1148126", "1731367"];
 let maxImgs = 3;
 let len = 69;
 
@@ -30,7 +30,7 @@ Promise.all(
                     body.match(/<item>.*?<\/item>/g).forEach((item) => {
                         if (cnt >= maxImgs) return;
                         const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)[1];
-                        const start = title.indexOf(':') + 1;
+                        const start = title.indexOf(':') + 1 || title.indexOf('：') + 1 || 0;
                         const link = item.match(/<link>(.*?)<\/link>/)[1];
                         const img = item.match(/img src="(.*?)"/);
                         const updateTime = new Date(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]).getTime();
@@ -38,14 +38,14 @@ Promise.all(
                             if (debug || updated[user] === undefined || updated[user] < updateTime) {
                                 const encodeImg = encodeURIComponent(img[1]);
                                 const imgLink = `shortcuts://run-shortcut?name=PicOpener&input=${encodeImg}`
-                                $.notify(`[豆瓣] ${userName}`, `${title.slice(start, len)}...`, `source: ${link}`, {
+                                $.notify(`[豆瓣广播] ${userName}`, "", `${title.slice(start, len)}...\nsource: ${link}`, {
                                     "media-url": img[1],
                                     "open-url": imgLink
                                 });
                                 cnt += 1;
                             } else return;
                         } else {
-                            $.notify(`[豆瓣] ${userName}`, `${title.slice(start, len)}...`, "点击查看更多", {
+                            $.notify(`[豆瓣广播] ${userName}`, "", `${title.slice(start, len)}...\n点击查看更多`, {
                                 "open-url": link
                             });
                         }
