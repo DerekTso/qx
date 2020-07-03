@@ -24,7 +24,8 @@ Promise.all(
         await $.get(`https://rsshub.app/douban/people/${user}/status`)
             .then((response) => {
                 const body = response.body;
-                const userName = body.match(/CDATA\[ 豆瓣广播 - (.*) \]/)[1];
+                $.log(`response: ${body}...`);
+                const userName = body.match(/CDATA\[\s?豆瓣广播 - (.*)\s?\]/)[1];
                 let cnt = 0;
                 response.body.match(/<item>[\s\S]*?<\/item>/g).forEach((item) => {
                     if (cnt >= maxImgs) return;
