@@ -1,10 +1,10 @@
 /**
  * Bilibili 动态图片推送
  * @author: Derek
- * @version: 0.1.3
+ * @version: 0.1.5
  */
 
-let users = ["3186249", "480179246"];
+let users = ["3186249", "49299", "480179246"];
 let maxImgs = 3;
 
 const $ = API("Bilibili");
@@ -20,13 +20,11 @@ const updated = JSON.parse($.read("updated") || "{}");
 
 Promise.all(
     users.map(async (user) => {
-        $.log(`Checking user ${user}...`);
         await $.get(`https://rsshub.app/bilibili/user/dynamic/${user}`)
             .then((response) => {
                 const body = response.body;
                 const userName = body.match(/CDATA\[(.*) 的 bilibili 动态\]/)[1];
                 let cnt = 0;
-                $.log(`user Name: ${userName}`);
                 response.body.match(/<item>[\s\S]*?<\/item>/g).forEach((item) => {
                     if (cnt >= maxImgs) return;
                     const img = item.match(/img src="(.*?)"/);
@@ -39,7 +37,6 @@ Promise.all(
                                 "media-url": img[1],
                                 "open-url": imgLink
                             });
-                            $.log(`IMG: ${img[1]}`);
                             cnt += 1;
                         } else return;
                     }
