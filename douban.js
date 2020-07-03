@@ -38,14 +38,14 @@ Promise.all(
                             if (debug || updated[user] === undefined || updated[user] < updateTime) {
                                 const encodeImg = encodeURIComponent(img[1]);
                                 const imgLink = `shortcuts://run-shortcut?name=PicOpener&input=${encodeImg}`
-                                $.notify(`[豆瓣广播] ${userName}`, "", `${title.slice(start, len)}...\nsource: ${link}`, {
+                                $.notify(`[豆瓣广播] ${userName}`, "", `${title.slice(start, len)}...\n\n[source](${link})`, {
                                     "media-url": img[1].replace(/(status)\/(.*?)\/(public)/, "$1/raw/$2"),
                                     "open-url": imgLink
                                 });
                                 cnt += 1;
                             } else return;
                         } else {
-                            $.notify(`[豆瓣广播] ${userName}`, "", `${title.slice(start, len)}...\n点击查看更多`, {
+                            $.notify(`[豆瓣广播] ${userName}`, "", `${title.slice(start, len)}...\n\n点击查看更多`, {
                                 "open-url": link
                             });
                         }
