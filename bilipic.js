@@ -20,11 +20,13 @@ const updated = JSON.parse($.read("updated") || "{}");
 
 Promise.all(
     users.map(async (user) => {
+        $.log(`Checking user ${user}...`);
         await $.get(`https://rsshub.app/bilibili/user/dynamic/${user}`)
             .then((response) => {
                 const body = response.body;
                 const userName = body.match(/CDATA\[(.*) 的 bilibili 动态\]/)[1];
                 let cnt = 0;
+                $.log(`user Name: ${userName}`);
                 response.body.match(/<item>[\s\S]*?<\/item>/g).forEach((item) => {
                     if (cnt >= maxImgs) return;
                     const img = item.match(/img src="(.*?)"/);
@@ -32,7 +34,7 @@ Promise.all(
                     if (img) {
                         if (debug || updated[user] === undefined || updated[user] < updateTime) {
                             const encodeImg = encodeURIComponent(img[1]);
-                            const imgLink = `shortcuts://run-shortcut?name=PicOpener&input={{encodeImg}}`
+                            const imgLink = `shortcuts://run-shortcut?name=PicOpener&input=${encodeImg}`
                             $.notify(`[Bilibili] ${userName}`, "", "", {
                                 "media-url": img[1],
                                 "open-url": imgLink
