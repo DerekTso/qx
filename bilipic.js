@@ -1,7 +1,7 @@
 /**
  * Bilibili 动态图片推送
  * @author: Derek
- * @version: 0.1.0
+ * @version: 0.1.1
  */
 
 let users = ["3186249, 480179246"];
