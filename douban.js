@@ -23,18 +23,17 @@ Promise.all(
     users.map(async (user) => {
         await $.get(`https://rsshub.app/douban/people/${user}/status`)
             .then((response) => {
-                const body = response.body.replace(/[\r|\n]/g, '');
+                const body = response.body.replace(/[\r\n\t\f\v]| {3,}/g, '');
                 console.log(`body: ' ${body}`);
-                const userName = body.match(/CDATA\[\s?豆瓣广播 - (.*)\s?\]/)[1];
+                const userName = body.match(/<title><!\[CDATA\[豆瓣广播 - (.*?)\]\]><\/title>/)[1];
                 let cnt = 0;
                 response.body.match(/<item>[\s\S]*?<\/item>/g).forEach((item) => {
                     if (cnt >= maxImgs) return;
                     console.log(`item: ' ${item}`);
-                    const titleSet = item.match(/<title>[\s\S]*?<\/title>/g)[1];
-                    console.log(`titleset: ' ${titleSet}`);
-                    const title = titleSet.match(/CDATA\[(.*)\]/)[1].slice(len);
+                    let regTitle = `/<title><!\[CDATA\[${userName} (.*?)\]\]><\/title>/g`;
+                    const title = item.match(regTitle)[1];
                     console.log(`title: ' ${title}`);
-                    const link = item.match(/<link>[\s\S]*?<\/link>/g)[1];
+                    const link = item.match(/<link>(.*?)<\/link>/g)[1];
                     const img = item.match(/img src="(.*?)"/);
                     const updateTime = new Date(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]).getTime();
                     if (img) {
