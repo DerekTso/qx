@@ -24,12 +24,15 @@ Promise.all(
         await $.get(`https://rsshub.app/douban/people/${user}/status`)
             .then((response) => {
                 const body = response.body;
-                $.log(`response: ${body}...`);
+                console.log(`response: ${body}`);
                 const userName = body.match(/CDATA\[\s?豆瓣广播 - (.*)\s?\]/)[1];
                 let cnt = 0;
                 response.body.match(/<item>[\s\S]*?<\/item>/g).forEach((item) => {
                     if (cnt >= maxImgs) return;
-                    const title = item.match(/<title>[\s\S]*?<\/title>/g)[1].match(/CDATA\[(.*)\]/)[1].slice(len);
+                    const titleSet = item.match(/<title>[\s\S]*?<\/title>/g)[1];
+                    console.log(`titleset: ' ${titleSet}`);
+                    const title = titleSet.match(/CDATA\[(.*)\]/)[1].slice(len);
+                    console.log(`title: ' ${title}`);
                     const link = item.match(/<link>[\s\S]*?<\/link>/g)[1];
                     const img = item.match(/img src="(.*?)"/);
                     const updateTime = new Date(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]).getTime();
