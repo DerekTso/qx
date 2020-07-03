@@ -30,7 +30,8 @@ Promise.all(
                     const updateTime = new Date(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]).getTime();
                     if (img) {
                         if (debug || updated[user] === undefined || updated[user] < updateTime) {
-                            const imgLink = `shortcuts://run-shortcut?name=PicOpener&input={{encodeURIComponent(img)}}`
+                            const encodeImg = encodeURIComponent(img[1]);
+                            const imgLink = `shortcuts://run-shortcut?name=PicOpener&input={{encodeImg}}`
                             $.notify(`[Bilibili] ${userName}`, "", "", {
                                 "media-url": img[1],
                                 "open-url": imgLink
