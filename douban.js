@@ -1,12 +1,12 @@
 /**
  * Douban 用户动态推送
  * @author: Derek
- * @version: 0.1.2
+ * @version: 0.1.3
  */
 
-let users = ["121769342", "1148126", "1731367"];
+let users = ["121769342", "1148126", "1731367", "41417375"];
 let maxImgs = 3;
-let len = 69;
+let len = 99;
 
 const $ = API("Douban");
 const debug = false;
@@ -39,7 +39,7 @@ Promise.all(
                                 const encodeImg = encodeURIComponent(img[1]);
                                 const imgLink = `shortcuts://run-shortcut?name=PicOpener&input=${encodeImg}`
                                 $.notify(`[豆瓣广播] ${userName}`, "", `${title.slice(start, len)}...\nsource: ${link}`, {
-                                    "media-url": img[1],
+                                    "media-url": img[1].replace(/(status)\/(.*?)\/(public)/, "$1/raw/$2"),
                                     "open-url": imgLink
                                 });
                                 cnt += 1;
