@@ -27,11 +27,10 @@ Promise.all(
                 console.log(`body: ' ${body}`);
                 const userName = body.match(/<title><!\[CDATA\[豆瓣广播 - (.*?)\]\]><\/title>/)[1];
                 let cnt = 0;
-                response.body.match(/<item>[\s\S]*?<\/item>/g).forEach((item) => {
+                response.body.match(/<item>.*?<\/item>/g).forEach((item) => {
                     if (cnt >= maxImgs) return;
-                    console.log(`item: ' ${item}`);
-                    let regTitle = `/<title><!\[CDATA\[${userName} (.*?)\]\]><\/title>/g`;
-                    const title = item.match(regTitle)[1];
+                    console.log(`==== item: ' ${item}`);
+                    const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/g)[1];
                     console.log(`title: ' ${title}`);
                     const link = item.match(/<link>(.*?)<\/link>/g)[1];
                     const img = item.match(/img src="(.*?)"/);
