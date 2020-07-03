@@ -23,37 +23,38 @@ Promise.all(
     users.map(async (user) => {
         await $.get(`https://rsshub.app/douban/people/${user}/status`)
             .then((response) => {
-                const body = response.body.replace(/[\r\n\t\f\v]| {3,}/g, '');
-                console.log(`body: ' ${body}`);
-                const userName = body.match(/<title><!\[CDATA\[豆瓣广播 - (.*?)\]\]><\/title>/)[1];
-                let cnt = 0;
-                response.body.match(/<item>.*?<\/item>/g).forEach((item) => {
-                    if (cnt >= maxImgs) return;
-                    console.log(`==== item: ' ${item}`);
-                    const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/g)[1];
-                    console.log(`title: ' ${title}`);
-                    const link = item.match(/<link>(.*?)<\/link>/g)[1];
-                    const img = item.match(/img src="(.*?)"/);
-                    const updateTime = new Date(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]).getTime();
-                    if (img) {
-                        if (debug || updated[user] === undefined || updated[user] < updateTime) {
-                            const encodeImg = encodeURIComponent(img[1]);
-                            const imgLink = `shortcuts://run-shortcut?name=PicOpener&input=${encodeImg}`
-                            $.notify(`[Douban] ${userName}`, `${title}`, `Link: ${link}`, {
-                                "media-url": img[1],
-                                "open-url": imgLink
+                if(response && response.body) {
+                    const body = response.body.replace(/[\r\n\t\f\v]| {3,}/g, '');
+                    const userName = body.match(/<title><!\[CDATA\[豆瓣广播 - (.*?)\]\]><\/title>/)[1];
+                    let cnt = 0;
+                    body.match(/<item>.*?<\/item>/g).forEach((item) => {
+                        if (cnt >= maxImgs) return;
+                        console.log(`==== item: ' ${item}`);
+                        const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/g)[1];
+                        console.log(`title: ' ${title}`);
+                        const link = item.match(/<link>(.*?)<\/link>/g)[1];
+                        const img = item.match(/img src="(.*?)"/);
+                        const updateTime = new Date(item.match(/<pubDate>(.*?)<\/pubDate>/)[1]).getTime();
+                        if (img) {
+                            if (debug || updated[user] === undefined || updated[user] < updateTime) {
+                                const encodeImg = encodeURIComponent(img[1]);
+                                const imgLink = `shortcuts://run-shortcut?name=PicOpener&input=${encodeImg}`
+                                $.notify(`[Douban] ${userName}`, `${title}`, `Link: ${link}`, {
+                                    "media-url": img[1],
+                                    "open-url": imgLink
+                                });
+                                cnt += 1;
+                            } else return;
+                        } else {
+                            $.notify(`[Douban] ${userName}`, `${title}`, "", {
+                                "open-url": link
                             });
-                            cnt += 1;
-                        } else return;
-                    } else {
-                        $.notify(`[Douban] ${userName}`, `${title}`, "", {
-                            "open-url": link
-                        });
-                    }
-                });
-                // update timestamp
-                updated[user] = new Date().getTime();
-                $.write(JSON.stringify(updated), "douban_updated");
+                        }
+                    });
+                    // update timestamp
+                    updated[user] = new Date().getTime();
+                    $.write(JSON.stringify(updated), "douban_updated");
+                }
             })
             .catch((error) => {
                 $.error(error);
